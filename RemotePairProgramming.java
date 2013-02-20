@@ -58,7 +58,7 @@ public class RemotePairProgramming extends JFrame{
         controlPanel.add(aboutButton);
         aboutButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e){
-        		JOptionPane.showMessageDialog(frame,"Author: Kevin\nEmail: kevin.xgr@gmail.com\nSoftware Page: http://github.com/kevin-xi\nGNU GPL","About",JOptionPane.INFORMATION_MESSAGE);
+        		JOptionPane.showMessageDialog(frame,"Author: Kevin\nEmail: kevin.xgr@gmail.com\nSoftware Page: https://github.com/Kevin-Xi/RemotePairProgramming\nGNU GPL","About",JOptionPane.INFORMATION_MESSAGE);
         	}
         });
 
