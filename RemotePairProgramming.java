@@ -9,10 +9,19 @@ import javax.swing.event.*;
 public class RemotePairProgramming extends JFrame{
 
 	/* Component*/
-	private JTextPane codeBlock=new JTextPane();
+	//private JTextPane codeBlock=new JTextPane();
+	private JTextArea codeBlock=new JTextArea();
 	private JScrollPane scrollPane = new JScrollPane(codeBlock,
-		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	private JPanel codeBlockPanel=new JPanel();
+
+  	private JButton colorButton=new JButton("Color");
+	
+	private JButton openButton = new JButton("Open");
+	private JButton saveButton = new JButton("Save");
+	private JButton clearButton = new JButton("Clear");
+
+	private JFileChooser jFileChooser= new JFileChooser(new File("."));
 
 	private	JButton connectButton=new JButton("Connect");
 	private JButton getKeyboardButton=new JButton("Get Keyboard");
@@ -68,6 +77,10 @@ public class RemotePairProgramming extends JFrame{
         controlPanel.setLayout(new GridLayout(11,1));
         controlPanel.add(connectButton);
         controlPanel.add(getKeyboardButton);
+        controlPanel.add(colorButton);
+        controlPanel.add(openButton);
+        controlPanel.add(saveButton);
+        controlPanel.add(clearButton);
         controlPanel.add(aboutButton);
                 
         /* main frame */
@@ -94,6 +107,36 @@ public class RemotePairProgramming extends JFrame{
         aboutButton.addActionListener(new AboutButtonListener());
 
         frame.addWindowListener(new CloseWindowListener());
+
+        openButton.addActionListener(new ActionListener() {
+      		public void actionPerformed(ActionEvent e) {
+        		open();
+      		}
+    	});
+
+	    saveButton.addActionListener(new ActionListener() {
+	      	public void actionPerformed(ActionEvent evt) {
+	        	save();
+	      	}
+	    });
+
+	    clearButton.addActionListener(new ActionListener() {
+	      	public void actionPerformed(ActionEvent evt) {
+	        	codeBlock.setText(null);
+	      	}
+	    });
+
+	    colorButton.addActionListener(new ActionListener() {
+      		public void actionPerformed(ActionEvent evt) {
+        		Color foregroundColor =JColorChooser.showDialog(null, "Choose Foreground Color",codeBlock.getForeground());
+        		if (foregroundColor != null)
+          			codeBlock.setForeground(foregroundColor);
+
+        		Color backgroundColor =JColorChooser.showDialog(null, "Choose Background Color",codeBlock.getBackground());
+        		if (backgroundColor != null)
+          			codeBlock.setBackground(backgroundColor);
+      		}
+    	});
     }
 
     private void initServerSocket(){
@@ -379,6 +422,54 @@ public class RemotePairProgramming extends JFrame{
         }
     }   
   
+    /** Open file */
+	private void open() {
+	    if (jFileChooser.showOpenDialog(this) ==JFileChooser.APPROVE_OPTION)
+	      	open(jFileChooser.getSelectedFile());
+	}
+
+	/** Open file with the specified File instance */
+	private void open(File file) {
+	    try {
+		    // Read from the specified file and store it in codeBlock
+		    BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+		    byte[] b = new byte[in.available()];
+		    in.read(b, 0, b.length);
+		    codeBlock.append(new String(b, 0, b.length));
+		    in.close();
+
+		    // Display the status of the Open file operation in statusLable
+		    statusLable.setText(file.getName() + " Opened");
+	    }
+	    catch (IOException ex) {
+	    	statusLable.setText("Error opening " + file.getName());
+	    }
+	}
+
+	/** Save file */
+	private void save() {
+		if (jFileChooser.showSaveDialog(this) ==JFileChooser.APPROVE_OPTION) {
+		    save(jFileChooser.getSelectedFile());
+		}
+	}
+
+	/** Save file with specified File instance */
+	private void save(File file) {
+	    try {
+		    // Write the text in codeBlock to the specified file
+		    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		    byte[] b = (codeBlock.getText()).getBytes();
+		    out.write(b, 0, b.length);
+		    out.close();
+
+		    // Display the status of the save file operation in statusLable
+		    statusLable.setText(file.getName()  + " Saved ");
+	    }
+	    catch (IOException ex) {
+	    	statusLable.setText("Error saving " + file.getName());
+	    }
+	  }
+
   	/* main */
 	public static void main(String[] args) {
 
